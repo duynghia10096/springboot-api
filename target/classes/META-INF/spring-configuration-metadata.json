@@ -1,0 +1,18 @@
+{
+  "groups": [
+    {
+      "name": "storage",
+      "type": "com.DDN.login.config.StorageProperties",
+      "sourceType": "com.DDN.login.config.StorageProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "storage.location",
+      "type": "java.lang.String",
+      "description": "Folder location for storing files",
+      "sourceType": "com.DDN.login.config.StorageProperties"
+    }
+  ],
+  "hints": []
+}
