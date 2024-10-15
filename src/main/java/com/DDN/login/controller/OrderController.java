@@ -15,10 +15,7 @@ import com.DDN.login.repository.UserReposity;
 import com.DDN.login.security.service.AuthenticationService;
 import com.DDN.login.security.service.OrderService;
 
-import com.stripe.Stripe;
-import com.stripe.exception.StripeException;
-import com.stripe.model.PaymentIntent;
-import com.stripe.param.PaymentIntentCreateParams;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -48,24 +45,7 @@ public class OrderController {
 
     @Autowired
     private OrderItemRepository orderItemRepository;
-
-
-
-    @Value("${STRIPE_SECRET_KEY}")
-    private String apiKey;
-
-    @PostMapping("/create-payment-intent")
-    public ResponseEntity<StripeResponse> checkout(@RequestBody CartDto CartDto)  throws StripeException {
-        Stripe.apiKey = apiKey;
-        PaymentIntentCreateParams createParams = new
-                PaymentIntentCreateParams.Builder()
-                .setCurrency("usd")
-                .setAmount(CartDto.getTotalPrice() *100L)
-                .build();
-        PaymentIntent intent = PaymentIntent.create(createParams);
-        StripeResponse stripeResponse = new StripeResponse(intent.getClientSecret());
-        return new ResponseEntity<StripeResponse>(stripeResponse, HttpStatus.OK);
-    }
+   
 
 
     @PostMapping("/saveOrder")

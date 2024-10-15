@@ -15,9 +15,6 @@ import com.DDN.login.payload.filter.SearchSuggestionResponse;
 import com.DDN.login.repository.dao.info.ProductInfoRepository;
 import com.DDN.login.security.service.interfaces.CommonDataService;
 
-import com.stripe.Stripe;
-import com.stripe.model.Charge;
-import com.stripe.param.ChargeCreateParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -37,62 +34,13 @@ import java.util.*;
 @RequestMapping("/commondata")
 public class CommonDataController {
 
-    @Value("${STRIPE_SECRET_KEY}")
-    private String apiKey;
+   
 
     @Autowired
     CommonDataService commonDataService;
-
-
-    // @Autowired
-    // private ApparelCategoryRepository apparelCategoryRepository;
-    // @Autowired
-    // private ProductBrandCategoryRepository productBrandCategoryRepository;
-    // @Autowired
-    // private PriceRangeCategoryRepository priceRangeCategoryRepository;
     @Autowired
     private ProductInfoRepository productInfoRepository;
 
-
-   
-
-    @PostMapping("/payment")
-    public ResponseEntity<PaymentStatus> chargeCustomer(@RequestBody CardToken cardToken) {
-
-        Stripe.apiKey = apiKey;
-        Stripe.setMaxNetworkRetries(2);
-
-        Charge charge;
-        PaymentStatus paymentStatus;
-
-        try {
-            ChargeCreateParams params = ChargeCreateParams.builder()
-                    .setAmount(cardToken.getAmount())
-                    .setCurrency(cardToken.getCurrency())
-                    .setDescription("Shopper Buy")
-                    .setSource(cardToken.getId())
-                    .build();
-
-            charge = Charge.create(params);
-
-            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-
-            paymentStatus = new PaymentStatus(timestamp.getTime(), false,
-                    charge.getId(),
-                    charge.getBalanceTransaction(),
-                    charge.getReceiptUrl());
-
-        } catch (Exception e) {
-            paymentStatus = new PaymentStatus();
-            paymentStatus.setPayment_failed(true);
-            System.out.println("Something went wrong with Stripe API");
-            return ResponseEntity.badRequest().body(paymentStatus);
-        }
-
-        System.out.println("Payment is successful....");
-        // System.out.println(paymentStatus.get();
-        return ResponseEntity.ok(paymentStatus);
-    }
 
     @GetMapping(value = "/products", params = "q")
     public ResponseEntity<?> getProductsByCategories(@RequestParam("q") String queryPrams) {
@@ -185,7 +133,7 @@ public class CommonDataController {
 
     @GetMapping("/getAllProducts")
     public ResponseEntity<Map<String, Object>> getAllProducts(@RequestParam int page, @RequestParam int pageSize) {
-      
+
         List<ProductInfo> products = new ArrayList<ProductInfo>();
         Pageable pagingSort = PageRequest.of(page, pageSize);
         Page<ProductInfo> pageProducts;
