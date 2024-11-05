@@ -3,7 +3,7 @@ package com.DDN.login.security.service;
 import com.DDN.login.model.info.ProductInfo;
 import com.DDN.login.repository.OrderItemRepository;
 import com.DDN.login.repository.OrderRepository;
-import com.DDN.login.repository.ProductRepository;
+
 import com.DDN.login.repository.UserReposity;
 import com.DDN.login.dto.CartItemDto;
 import com.DDN.login.dto.CheckoutItemDto;
@@ -12,7 +12,7 @@ import com.DDN.login.exception.OrderNotFoundException;
 import com.DDN.login.exception.ProductNotExistException;
 import com.DDN.login.model.Order;
 import com.DDN.login.model.OrderItem;
-import com.DDN.login.model.Product;
+
 import com.DDN.login.model.User;
 import com.DDN.login.repository.dao.info.ProductInfoRepository;
 import org.springframework.beans.factory.annotation.Autowired;

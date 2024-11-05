@@ -1,6 +1,5 @@
 package com.DDN.login.controller;
 
-
 import com.DDN.login.common.ApiResponse;
 import com.DDN.login.dto.auth.AccountCreationRequest;
 import com.DDN.login.dto.auth.AccountCreationResponse;
@@ -53,10 +52,8 @@ public class AuthController {
     @Autowired
     private RoleRepository roleRepository;
 
-  
-
-//    @Autowired
-//    private PasswordEncoder encoder;
+    // @Autowired
+    // private PasswordEncoder encoder;
 
     @Autowired
     private JwtUtils jwtUtils;
@@ -64,9 +61,9 @@ public class AuthController {
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
 
-
     @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody AccountCreationRequest accountCreationRequest) throws Exception{
+    public ResponseEntity<?> registerUser(@Valid @RequestBody AccountCreationRequest accountCreationRequest)
+            throws Exception {
         if (userRepository.existsByUsername(accountCreationRequest.getUsername())) {
             return ResponseEntity.ok(new AccountCreationResponse("failure", "Username already exists"));
         }
@@ -76,8 +73,9 @@ public class AuthController {
         }
 
         // Create new user's account
-        User user = new User(accountCreationRequest.getFirstName(),accountCreationRequest.getLastName(),
-                accountCreationRequest.getUsername(), Md5Util.getInstance().getMd5Hash(accountCreationRequest.getPassword()),
+        User user = new User(accountCreationRequest.getFirstName(), accountCreationRequest.getLastName(),
+                accountCreationRequest.getUsername(),
+                Md5Util.getInstance().getMd5Hash(accountCreationRequest.getPassword()),
                 accountCreationRequest.getEmail());
 
         Set<String> strRoles = accountCreationRequest.getRole();
@@ -116,15 +114,15 @@ public class AuthController {
     }
 
     @GetMapping("/allUser")
-    public ResponseEntity<Map<String, Object>> getAllUsers(@RequestParam int page, @RequestParam int pageSize){
+    public ResponseEntity<Map<String, Object>> getAllUsers(@RequestParam int page, @RequestParam int pageSize) {
         List<User> users = new ArrayList<>();
-        Pageable pagingSort = PageRequest.of(page,pageSize);
+        Pageable pagingSort = PageRequest.of(page, pageSize);
         Page<User> pageUsers;
 
         pageUsers = userRepository.findAll(pagingSort);
 
         users = pageUsers.getContent();
-        Map<String,Object> response = new HashMap<>();
+        Map<String, Object> response = new HashMap<>();
         response.put("users", users);
         response.put("currentPage", pageUsers.getNumber());
         response.put("totalItems", pageUsers.getTotalElements());
@@ -133,23 +131,21 @@ public class AuthController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/detail/{id}")
-    public ResponseEntity<User> findByUserId(@PathVariable Long id) {
-        Optional<User> userInfo = userRepository.findById(id);
+    @GetMapping("/detail/{userId}")
+    public ResponseEntity<User> findByUserId(@PathVariable Long userId) {
+        Optional<User> userInfo = userRepository.findById(userId);
 
         return new ResponseEntity<>(userInfo.get(), HttpStatus.OK);
     }
 
-
-
     @DeleteMapping("/delete/{userId}")
     public ResponseEntity<ApiResponse> deleteUser(@PathVariable("userId") long userId) {
-            userRepository.deleteById(userId);
-            return new ResponseEntity<ApiResponse>(new ApiResponse(true, "User has been removed"), HttpStatus.OK);
+        userRepository.deleteById(userId);
+        return new ResponseEntity<ApiResponse>(new ApiResponse(true, "User has been removed"), HttpStatus.OK);
     }
 
     @PostMapping("/authenticate")
-    public ResponseEntity<?> createAuthenticationToken(@RequestHeader(value="Authorization") String headerData) {
+    public ResponseEntity<?> createAuthenticationToken(@RequestHeader(value = "Authorization") String headerData) {
         AuthenticationRequest authenticationRequest = new AuthenticationRequest();
         String[] data = headerData.split(" ");
         byte[] decoded = Base64.getDecoder().decode(data[1]);
@@ -162,15 +158,15 @@ public class AuthController {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(),
-                            Md5Util.getInstance().getMd5Hash(authenticationRequest.getPassword()))
-            );
-        } catch(BadCredentialsException e) {
+                            Md5Util.getInstance().getMd5Hash(authenticationRequest.getPassword())));
+        } catch (BadCredentialsException e) {
             return ResponseEntity.ok(new AuthenticationResponse(null, "Incorrect username or password", null));
-        } catch(Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.ok(new AuthenticationResponse(null, "User name does not exist", null));
         }
 
-        final UserDetails userDetails = customUserDetailsService.loadUserByUsername(authenticationRequest.getUsername());
+        final UserDetails userDetails = customUserDetailsService
+                .loadUserByUsername(authenticationRequest.getUsername());
         final String jwt = jwtUtils.generateToken(userDetails);
         Optional<User> user = userRepository.findByUsername(authenticationRequest.getUsername());
 
@@ -180,8 +176,7 @@ public class AuthController {
     @PostMapping("/admin")
     public ResponseEntity<?> adminLogin(@Valid @RequestBody LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
-        );
+                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateToken2(authentication);

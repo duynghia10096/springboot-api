@@ -107,6 +107,7 @@ public class ApparelService {
             File uploadFile = convertMultipartToFile(fileNames.get(0));
             Map uploadResult = cloudinaryConfig.uploader().upload(uploadFile, ObjectUtils.emptyMap());
             urlUpload = uploadResult.get("url").toString();
+            uploadFile.delete();
         } catch (Exception e) {
             throw new RuntimeException();
         }

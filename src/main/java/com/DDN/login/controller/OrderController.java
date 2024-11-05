@@ -102,11 +102,8 @@ public class OrderController {
     }
 
 
-
-
-
     @GetMapping("/allOrders")
-    public ResponseEntity<Map<String, Object>> getAllProducts(@RequestParam int page, @RequestParam int pageSize) {
+    public ResponseEntity<Map<String, Object>> getAllOrders(@RequestParam int page, @RequestParam int pageSize) {
 
         List<Order> orders = new ArrayList<Order>();
         Pageable pagingSort = PageRequest.of(page,pageSize);

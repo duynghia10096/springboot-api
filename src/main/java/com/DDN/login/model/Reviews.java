@@ -25,7 +25,6 @@ public class Reviews implements Serializable {
 
     private Date created_Date;
     @ManyToOne
-
     @JoinColumn(name="product_id")
     @JsonIgnore
     private ProductInfo productInfo;

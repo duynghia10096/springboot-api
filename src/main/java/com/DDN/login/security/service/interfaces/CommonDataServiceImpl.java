@@ -255,6 +255,7 @@ public class CommonDataServiceImpl implements CommonDataService {
                 File uploadFile = convertMultipartToFile(fileNames.get(i));
                 Map uploadResult = cloudinaryConfig.uploader().upload(uploadFile, ObjectUtils.emptyMap());
                 urlUploadArray.add(uploadResult.get("url").toString());
+                uploadFile.delete();
             }
 
         } catch(Exception e) {

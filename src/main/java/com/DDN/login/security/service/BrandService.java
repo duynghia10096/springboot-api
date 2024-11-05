@@ -94,6 +94,7 @@ public class BrandService {
             File uploadFile = convertMultipartToFile(fileNames.get(0));
             Map uploadResult = cloudinary.uploader().upload(uploadFile, ObjectUtils.emptyMap());
             urlUpload = uploadResult.get("url").toString();
+            uploadFile.delete();
         } catch (Exception e) {
             throw new RuntimeException();
         }
